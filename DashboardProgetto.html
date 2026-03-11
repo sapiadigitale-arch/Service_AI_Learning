@@ -1,0 +1,482 @@
+ <!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service AI Learning - IC Settimo III</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 30vh;
+            max-height: 300px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 40vh;
+                max-height: 350px;
+            }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .timeline-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #1d4ed8;
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+        
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #cbd5e1;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-12">
+
+    <!-- Chosen Palette: Slate & Blue Neutrals (Background #f8fafc, Text #0f172a, Accents #2563eb e #10b981) -->
+    <!-- Application Structure Plan: Dashboard interattiva progettata per il monitoraggio esecutivo del progetto PNRR. Sostituisce la lettura sequenziale del PDF con un'esplorazione task-oriented: una panoramica per il contesto, una timeline interattiva per l'operatività (Milestone basate sul CSV aggiornato), schede di governance per le responsabilità, e una dashboard dati visiva per i KPI. Questa struttura facilita il Dirigente Scolastico e il Nucleo di Progetto nel controllo costante dello stato di avanzamento. -->
+    <!-- Visualization & Content Choices: Obiettivi formativi (30%) -> Grafico a Ciambella (Chart.js) -> Hover per dettagli -> Visualizzazione chiara del target contro la base totale. Timeline di Progetto -> Elementi HTML cliccabili -> Mostra dettagli Milestone (JS) -> Navigazione non lineare dei dati CSV. Struttura organizzativa -> Grid CSS -> Espansione testuale -> Comprensione immediata dei ruoli (NO SVG/Mermaid). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-slate-900 text-white pt-12 pb-24 px-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 via-emerald-400 to-amber-500"></div>
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-2xl">&#x1F3DB;</span>
+                        <p class="text-blue-300 font-semibold tracking-wide uppercase text-sm">Istituto Comprensivo Settimo III</p>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Service AI Learning</h1>
+                    <p class="text-slate-300 text-lg md:text-xl max-w-2xl font-light">
+                        Implementazione dell'Intelligenza Artificiale come servizio alla comunità educante. Progetto 2025-2028.
+                    </p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-sm text-sm">
+                    <p class="font-semibold text-white mb-1">&#x1F4CD; Contesto</p>
+                    <p class="text-slate-300">Integrazione Didattica e Amministrativa</p>
+                    <p class="text-slate-300">Fondi PNRR / PNSD</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 -mt-12 relative z-20 space-y-12">
+        
+        <section class="glass-panel rounded-2xl p-8" id="intro-section">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <span>&#x1F3AF;</span> Visione Strategica
+            </h2>
+            <p class="text-slate-600 leading-relaxed text-lg">
+                Questa dashboard operativa sintetizza le fasi di implementazione previste dal piano "Service AI Learning" dell'IC Settimo III. 
+                Esplora le sezioni sottostanti per analizzare la roadmap interattiva (suddivisa in trimestri), verificare le responsabilità 
+                degli attori coinvolti e monitorare i Key Performance Indicators (KPI) legati alla formazione del personale e all'adozione in aula.
+            </p>
+        </section>
+
+        <section id="timeline-section" class="space-y-6">
+            <div class="mb-2">
+                <h2 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                    <span>&#x1F5D3;</span> Cronoprogramma Operativo
+                </h2>
+                <p class="text-slate-500 mt-2">Seleziona una Milestone sulla linea temporale per visualizzarne i dettagli operativi e i risultati attesi.</p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" id="timeline-buttons">
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 min-h-[350px] transition-all duration-300" id="milestone-details">
+                <div class="h-full flex flex-col items-center justify-center text-slate-400 py-12">
+                    <span class="text-6xl mb-4 opacity-50">&#x231A;</span>
+                    <p class="text-xl">Seleziona una fase temporale per visualizzare i dettagli</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <section class="lg:col-span-2 space-y-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                        <span>&#x1F465;</span> Governance & Ruoli
+                    </h2>
+                    <p class="text-slate-500 mt-2">
+                        Struttura organizzativa per la garanzia di conformità normativa (GDPR/Privacy), gestione fondi PNRR e supporto didattico.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="role-card bg-white p-6 rounded-xl border border-slate-200 transition-all cursor-default">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-2xl p-2 bg-blue-100 text-blue-700 rounded-lg">&#x265B;</span>
+                            <h3 class="font-bold text-slate-800 text-lg">Deployer (DS)</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm">Responsabilità ultima del progetto. Approva policy, alloca risorse e garantisce conformità normativa MIM/GDPR.</p>
+                    </div>
+
+                    <div class="role-card bg-white p-6 rounded-xl border border-slate-200 transition-all cursor-default">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-2xl p-2 bg-emerald-100 text-emerald-700 rounded-lg">&#x2699;</span>
+                            <h3 class="font-bold text-slate-800 text-lg">Project Manager</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm">Coordinatore operativo. Gestisce cronoprogramma, logistica formazione e comunicazione interna.</p>
+                    </div>
+
+                    <div class="role-card bg-white p-6 rounded-xl border border-slate-200 transition-all cursor-default">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-2xl p-2 bg-amber-100 text-amber-700 rounded-lg">&#x1F9E0;</span>
+                            <h3 class="font-bold text-slate-800 text-lg">Nucleo di Progetto</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm">4 docenti + DSGA. Ricevono formazione avanzata, guidano la sperimentazione e redigono le policy istituzionali.</p>
+                    </div>
+
+                    <div class="role-card bg-white p-6 rounded-xl border border-slate-200 transition-all cursor-default">
+                        <div class="flex items-center gap-3 mb-3">
+                            <span class="text-2xl p-2 bg-purple-100 text-purple-700 rounded-lg">&#x1F4DD;</span>
+                            <h3 class="font-bold text-slate-800 text-lg">DSGA & DPO</h3>
+                        </div>
+                        <p class="text-slate-600 text-sm">Il DSGA gestisce costi e fondi PNRR. Il DPO valida gli strumenti per la protezione dei dati (Privacy by Design).</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-6">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                        <span>&#x1F4CA;</span> Monitoraggio KPI
+                    </h2>
+                    <p class="text-slate-500 mt-2">
+                        Obiettivi quantitativi fissati dal piano.
+                    </p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-center font-bold text-slate-700 mb-2">Target Formazione Docenti</h3>
+                    <p class="text-center text-sm text-slate-500 mb-6">Obiettivo minimo per completamento M2</p>
+                    
+                    <div class="chart-container">
+                        <canvas id="trainingChart"></canvas>
+                    </div>
+                    
+                    <div class="mt-8 space-y-5">
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-sm font-semibold text-slate-700">Classi Pilota (M3)</span>
+                                <span class="text-lg font-bold text-emerald-600">10</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-emerald-500 h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Implementazione IA per supporto BES/DSA</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-sm font-semibold text-slate-700">Processi ATA Ottimizzati (M3)</span>
+                                <span class="text-lg font-bold text-blue-600">2</span>
+                            </div>
+                            <div class="w-full bg-slate-200 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Adozione IA in area amministrativa</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="mt-24 border-t border-slate-200 bg-white py-8">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-sm text-slate-500 font-medium">
+                IC Settimo III - Piano "Service AI Learning" 2025-2028
+            </p>
+            <div class="flex gap-4">
+                <span class="text-xs font-bold px-3 py-1 bg-slate-100 text-slate-600 rounded-full border border-slate-200">PNRR Transizione Digitale</span>
+                <span class="text-xs font-bold px-3 py-1 bg-slate-100 text-slate-600 rounded-full border border-slate-200">PNSD</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const appData = {
+            milestones: [
+                {
+                    id: "M1",
+                    phase: "Analisi e Formazione Nucleo",
+                    period: "Trimestre 1 (Nov-Gen)",
+                    duration: "3 Mesi",
+                    responsible: "DS / Nucleo di Progetto",
+                    activities: [
+                        "Analisi bisogni formativi e tecnologici",
+                        "Selezione Nucleo di Progetto (5 membri)",
+                        "Formazione avanzata Nucleo",
+                        "Somministrazione questionario casi d'uso"
+                    ],
+                    deliverables: [
+                        "Documento Analisi Fabbisogni",
+                        "Team consolidato di 5 esperti"
+                    ],
+                    color: "blue"
+                },
+                {
+                    id: "M2",
+                    phase: "Formazione e Sviluppo Competenze",
+                    period: "Trimestre 1-2 (Dic-Mar)",
+                    duration: "4 Mesi",
+                    responsible: "Project Manager / Formatori Esterni",
+                    activities: [
+                        "Moduli formativi docenti (15-20 ore)",
+                        "IA Generativa e Didattica",
+                        "Creazione repository materiali",
+                        "Focus su Etica e Privacy"
+                    ],
+                    deliverables: [
+                        "Almeno il 30% del corpo docente formato",
+                        "Materiali didattici ad-hoc disponibili"
+                    ],
+                    color: "indigo"
+                },
+                {
+                    id: "M3",
+                    phase: "Sperimentazione Guidata",
+                    period: "Trimestre 2-3 (Feb-Mag)",
+                    duration: "4 Mesi",
+                    responsible: "Docenti Sperimentatori / DSGA / Nucleo",
+                    activities: [
+                        "Attività in 10 classi pilota",
+                        "Supporto BES/DSA e Pensiero Critico",
+                        "Sperimentazione Area Amministrativa (ATA)",
+                        "Raccolta feedback qualitativi e quantitativi"
+                    ],
+                    deliverables: [
+                        "Report di feedback (studenti/docenti)",
+                        "2 processi amministrativi ottimizzati con IA"
+                    ],
+                    color: "emerald"
+                },
+                {
+                    id: "M4",
+                    phase: "Policy e Disseminazione",
+                    period: "Trimestre 4 (Giu-Set)",
+                    duration: "4 Mesi",
+                    responsible: "DS / Nucleo / DPO",
+                    activities: [
+                        "Redazione 'Politica d'Istituto sull'Uso dell'IA'",
+                        "Creazione Vademecum per famiglie",
+                        "Evento finale di disseminazione",
+                        "Approvazione Consiglio d'Istituto"
+                    ],
+                    deliverables: [
+                        "Regolamento sull'Uso Etico approvato",
+                        "Vademecum operativo",
+                        "Report finale di progetto"
+                    ],
+                    color: "amber"
+                }
+            ],
+            state: {
+                selectedMilestoneId: null
+            }
+        };
+
+        function initApp() {
+            renderTimelineButtons();
+            initCharts();
+            if(appData.milestones.length > 0) {
+                selectMilestone(appData.milestones[0].id);
+            }
+        }
+
+        function renderTimelineButtons() {
+            const container = document.getElementById('timeline-buttons');
+            container.innerHTML = '';
+
+            appData.milestones.forEach(m => {
+                const btn = document.createElement('button');
+                btn.className = `timeline-btn w-full text-left p-4 rounded-xl border-2 border-slate-200 bg-white transition-all duration-200 flex flex-col gap-1 focus:outline-none focus:ring-2 focus:ring-${m.color}-500 focus:ring-offset-2`;
+                btn.dataset.id = m.id;
+                
+                btn.innerHTML = `
+                    <div class="flex justify-between items-center w-full">
+                        <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded">${m.id}</span>
+                        <span class="text-xs font-semibold text-slate-500">${m.period.split(' ')[0]}</span>
+                    </div>
+                    <span class="font-bold text-slate-800 mt-1 leading-tight text-sm md:text-base">${m.phase}</span>
+                `;
+
+                btn.addEventListener('click', () => selectMilestone(m.id));
+                container.appendChild(btn);
+            });
+        }
+
+        function selectMilestone(id) {
+            appData.state.selectedMilestoneId = id;
+            
+            document.querySelectorAll('.timeline-btn').forEach(btn => {
+                if (btn.dataset.id === id) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const milestone = appData.milestones.find(m => m.id === id);
+            renderMilestoneDetails(milestone);
+        }
+
+        function renderMilestoneDetails(milestone) {
+            const container = document.getElementById('milestone-details');
+            
+            const activitiesHtml = milestone.activities.map(act => 
+                `<li class="flex items-start gap-2 text-slate-700"><span class="text-slate-300 mt-1">&#x25B8;</span> <span>${act}</span></li>`
+            ).join('');
+
+            const deliverablesHtml = milestone.deliverables.map(del => 
+                `<div class="bg-white px-4 py-3 rounded-lg border border-slate-100 shadow-sm flex items-center gap-3">
+                    <span class="text-emerald-500 text-lg">&#x2714;</span>
+                    <span class="text-slate-800 font-medium text-sm">${del}</span>
+                </div>`
+            ).join('');
+
+            const content = `
+                <div class="fade-in flex flex-col h-full">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-8 border-b border-slate-100 pb-6">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="px-3 py-1 bg-${milestone.color}-100 text-${milestone.color}-800 font-bold rounded-full text-sm border border-${milestone.color}-200">${milestone.id}</span>
+                                <span class="text-slate-500 font-medium flex items-center gap-1">&#x1F4C5; ${milestone.period}</span>
+                                <span class="text-slate-400 text-sm hidden md:inline">(&#x23F3; ${milestone.duration})</span>
+                            </div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-slate-900">${milestone.phase}</h3>
+                        </div>
+                        <div class="bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 min-w-[200px]">
+                            <p class="text-xs uppercase font-bold text-slate-400 mb-1">Responsabilità Primaria</p>
+                            <p class="font-semibold text-slate-800 flex items-center gap-2">
+                                &#x1F464; ${milestone.responsible}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                &#x2692; Attività Principali
+                            </h4>
+                            <ul class="space-y-3">
+                                ${activitiesHtml}
+                            </ul>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h4 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                &#x1F4E6; Risultati Attesi (Deliverables)
+                            </h4>
+                            <div class="space-y-3">
+                                ${deliverablesHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = content;
+        }
+
+        function initCharts() {
+            const ctx = document.getElementById('trainingChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Docenti da Formare (Target M2)', 'Rimanente Corpo Docente'],
+                    datasets: [{
+                        data: [30, 70],
+                        backgroundColor: [
+                            '#3b82f6', 
+                            '#e2e8f0'  
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            display: false 
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw + '%';
+                                }
+                            },
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { family: 'Inter', size: 13 },
+                            bodyFont: { family: 'Inter', size: 13 },
+                            padding: 10,
+                            cornerRadius: 8
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'textCenter',
+                    beforeDraw: function(chart) {
+                        var width = chart.width,
+                            height = chart.height,
+                            ctx = chart.ctx;
+
+                        ctx.restore();
+                        var fontSize = (height / 100).toFixed(2);
+                        ctx.font = "bold " + fontSize + "em Inter";
+                        ctx.textBaseline = "middle";
+                        ctx.fillStyle = "#1e293b";
+
+                        var text = "30%",
+                            textX = Math.round((width - ctx.measureText(text).width) / 2),
+                            textY = height / 2;
+
+                        ctx.fillText(text, textX, textY);
+                        ctx.save();
+                    }
+                }]
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
